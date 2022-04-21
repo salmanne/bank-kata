@@ -1,0 +1,37 @@
+package com.sea.bank.bank.domain;
+
+import java.io.PrintStream;
+import java.util.Date;
+
+import static com.sea.bank.bank.domain.Amount.amountOf;
+
+public class Account {
+
+    private Statement statement;
+
+    private Amount balance = amountOf(0);
+
+    public Account(Statement statement) {
+        this.statement = statement;
+    }
+
+    public void deposit(Amount value, Date date) {
+        recordTransaction(value, date);
+    }
+
+    public void withdrawal(Amount value, Date date) {
+        recordTransaction(value.negative(), date);
+    }
+
+    public void printStatement() {
+        statement.printTo();
+    }
+
+    private void recordTransaction(Amount value, Date date) {
+        Transaction transaction = new Transaction(value, date);
+        Amount balanceAfterTransaction = transaction.balanceAfterTransaction(balance);
+        balance = balanceAfterTransaction;
+        statement.addLineContaining(transaction, balanceAfterTransaction);
+    }
+
+}
